@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.IO;
+using System.Windows.Forms;
 using System.Collections.Generic;
 using NintendoWare_Audio_Player.Storage;
 
@@ -14,33 +15,54 @@ namespace NintendoWare_Audio_Player.Forms
         #region Event Handlers
 
         private void MainForm_Load(object sender, System.EventArgs e)
-        {
-            LoadSaveData();
-        }
+            => LoadSaveData();
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            SaveSystem.SaveCurrentData();
-        }
+            => SaveSystem.SaveCurrentData();
+
+        private void openToolStripMenuItem_Click(object sender, System.EventArgs e)
+            => OpenAudioFile();
 
         #endregion
 
         #region Methods
 
-        public void LoadSaveData()
+        private void LoadSaveData()
+        {
+            PopulateAudioListView(SaveSystem.saveDataInstance.audioFileData);
+        }
+
+        private void PopulateAudioListView(Dictionary<string, string> dictionary)
         {
             foreach (KeyValuePair<string, string> keyValuePair
                 in SaveSystem.saveDataInstance.audioFileData)
             {
-                PopulateAudioListView(keyValuePair.Key, keyValuePair.Value);
+                ListViewItem listViewItem = new ListViewItem(keyValuePair.Key);
+                listViewItem.SubItems.Add(keyValuePair.Value);
+                audioListView.Items.Add(listViewItem);
             }
         }
 
-        public void PopulateAudioListView(string name, string path)
+        private void OpenAudioFile()
         {
-            ListViewItem listViewItem = new ListViewItem(name);
-            listViewItem.SubItems.Add(path);
-            audioListView.Items.Add(listViewItem);
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Title = "Select NintendoWare Audio Files";
+                ofd.Multiselect = true;
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    int length = ofd.FileNames.Length;
+
+                    for (int i = 0; i < length; i++)
+                    {
+                        SaveSystem.saveDataInstance.audioFileData.Add
+                            (Path.GetFileName(ofd.FileNames[i]), ofd.FileNames[i]);
+                    }
+
+                    PopulateAudioListView(SaveSystem.saveDataInstance.audioFileData);
+                }
+            }
         }
 
         #endregion
