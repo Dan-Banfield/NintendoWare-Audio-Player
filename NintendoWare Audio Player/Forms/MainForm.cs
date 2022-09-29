@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System.Collections.Generic;
 using NintendoWare_Audio_Player.Storage;
+using NintendoWare_Audio_Player.Audio;
 
 namespace NintendoWare_Audio_Player.Forms
 {
@@ -22,6 +23,14 @@ namespace NintendoWare_Audio_Player.Forms
 
         private void openToolStripMenuItem_Click(object sender, System.EventArgs e)
             => OpenAudioFile();
+
+        private void audioListView_DoubleClick(object sender, System.EventArgs e)
+        {
+            if (audioListView.SelectedItems.Count == 0) return;
+
+            AudioPlayer.PlayBFSTMFile(audioListView.SelectedItems[0]
+                .SubItems[1].Text);
+        }
 
         #endregion
 
@@ -57,8 +66,12 @@ namespace NintendoWare_Audio_Player.Forms
 
                     for (int i = 0; i < length; i++)
                     {
-                        SaveSystem.saveDataInstance.audioFileData.Add
+                        try
+                        {
+                            SaveSystem.saveDataInstance.audioFileData.Add
                             (Path.GetFileName(ofd.FileNames[i]), ofd.FileNames[i]);
+                        }
+                        catch { }
                     }
 
                     PopulateAudioListView(SaveSystem.saveDataInstance.audioFileData);

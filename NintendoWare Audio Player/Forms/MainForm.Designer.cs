@@ -86,6 +86,7 @@
             this.audioListView.TabIndex = 1;
             this.audioListView.UseCompatibleStateImageBehavior = false;
             this.audioListView.View = System.Windows.Forms.View.Details;
+            this.audioListView.DoubleClick += new System.EventHandler(this.audioListView_DoubleClick);
             // 
             // nameColumnHeader
             // 
