@@ -34,6 +34,7 @@ namespace NintendoWare_Audio_Player.Forms
 
         private void PopulateAudioListView(Dictionary<string, string> dictionary)
         {
+            audioListView.Items.Clear();
             foreach (KeyValuePair<string, string> keyValuePair
                 in SaveSystem.saveDataInstance.audioFileData)
             {
